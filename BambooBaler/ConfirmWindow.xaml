@@ -1,0 +1,35 @@
+﻿<Window x:Class="BambooBaler.ConfirmWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BambooBaler"
+        mc:Ignorable="d"
+        Title="确认更新" Height="350" Width="600" WindowStyle="ToolWindow" WindowStartupLocation="CenterOwner">
+    <DockPanel Margin="10">
+        <DockPanel DockPanel.Dock="Top" Margin="0, 5">
+            <Label MinWidth="60">更新标题</Label>
+            <TextBox x:Name="txtTitle"></TextBox>
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <Label MinWidth="60"></Label>
+            <CheckBox x:Name="chkForceUpdate" DockPanel.Dock="Left" VerticalAlignment="Center" ToolTip="强制更新表示客户端必须更新到此版本才可以运行">强制更新</CheckBox>
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <Label MinWidth="60" ToolTip="这一批文件下载路径的前缀，默认为空，比如a.jpg下载路径就是a.jpg，前缀为http://d.com，则下载路径为http://d.com/a.jpg">URLBase</Label>
+            <TextBox x:Name="txtUrlBase"></TextBox>
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Bottom" Margin="0,5,0,10" Height="30">
+            <Button x:Name="btnCancel" DockPanel.Dock="Right" Margin="0,0" MinWidth="100" Click="BtnCancel_Click">取消</Button>
+            <Button x:Name="btnConfirm" DockPanel.Dock="Right" Margin="10,0" MinWidth="100" Click="BtnConfirm_Click">确认</Button>
+            <Label></Label>
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Bottom">
+            <Label HorizontalAlignment="Right">确认更新前记得检查下是否还要更新UI和启动器之类的</Label>
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Top" Margin="0, 5">
+            <Label MinWidth="60">详情</Label>
+            <TextBox x:Name="txtDetail" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"></TextBox>
+        </DockPanel>
+    </DockPanel>
+</Window>

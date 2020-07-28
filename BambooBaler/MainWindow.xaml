@@ -1,0 +1,103 @@
+﻿<Window x:Class="BambooBaler.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BambooBaler"
+        mc:Ignorable="d"
+        Title="Bamboo Baler" Height="720" Width="1280" AllowDrop="True" Drop="Window_Drop" Loaded="Window_Loaded" Closing="Window_Closing">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Margin="0, 5">
+            <WrapPanel DockPanel.Dock="Top">
+                <ComboBox x:Name="cmbQuickSelect" ToolTip="quick select" SelectionChanged="CmbQuickSelect_SelectionChanged">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding Name}" ToolTip="{Binding SvrUrl}"></Label>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Label VerticalAlignment="Center">服务器地址</Label>
+                <TextBox x:Name="txtServerUrl" MinWidth="100" VerticalContentAlignment="Center" IsReadOnly="True" ></TextBox>
+                <Label VerticalAlignment="Center">项目地址</Label>
+                <TextBox x:Name="txtProjDir" MinWidth="100" VerticalContentAlignment="Center" ToolTip="支持拖拽目录到本界面" IsReadOnly="True" ></TextBox>
+                <Button Margin="5,0" MinWidth="100" IsEnabled="False">1，向工作目录做改动</Button>
+                <Button x:Name="btnCheckChanges" Margin="5,0" MinWidth="100" Click="BtnCheckChanges_Click">2，检查改动</Button>
+                <Button x:Name="btnConfirmUpdate" Margin="5,0" MinWidth="100" Click="BtnConfirmUpdate_Click">3，确认更新</Button>
+                <Button x:Name="btnMergeVers" Margin="5,0" MinWidth="100" Click="BtnMergeVers_Click" ToolTip="版本太多时合并为一个版本，提升效率，方便管理">合并版本</Button>
+                <CheckBox x:Name="chkCheckTime" VerticalAlignment="Center" Margin="5,0,10,0" Checked="ChkCheckTime_Checked" Unchecked="ChkCheckTime_Unchecked">检查修改时间</CheckBox>
+                <Button Click="BtnOpenDiffDir_Click">打开改动目录</Button>
+            </WrapPanel>
+            <StackPanel x:Name="statusCanvas" Margin="0, 5, 0, 0">
+                <Label x:Name="lblStatus" Panel.ZIndex="1" Padding="0" VerticalContentAlignment="Center" Content="{Binding Status}"></Label>
+                <ProgressBar x:Name="progressBar" Value="{Binding Percent}" Height="5"></ProgressBar>
+            </StackPanel>
+        </StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="3"/>
+                <ColumnDefinition Width="100*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="361*"/>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" FontSize="16">版本</Label>
+            <Label Grid.Row="0" Grid.Column="2" FontSize="16">清单</Label>
+            <DockPanel Grid.Row="1" Grid.Column="0">
+                <DockPanel DockPanel.Dock="Top">
+                    <Label MinWidth="60">皮肤版本</Label>
+                    <Button x:Name="btnUpdateSkinVer" MinWidth="20" ToolTip="刷新皮肤版本" DockPanel.Dock="Right" Click="BtnUpdateSkinVer_Click">U</Button>
+                    <Label x:Name="lblSkinVer" Content="{Binding SkinVer}"></Label>
+                </DockPanel>
+                <DockPanel DockPanel.Dock="Top">
+                    <Label MinWidth="60">启动目标</Label>
+                    <Button x:Name="btnSelectLaunchTarget" MinWidth="20" ToolTip="从清单的列表选中项选择" DockPanel.Dock="Right" Click="BtnSelectLaunchTarget_Click">Q</Button>
+                    <Label x:Name="lblLaunchTarget" Content="{Binding LaunchTarget}"></Label>
+                </DockPanel>
+                <DockPanel DockPanel.Dock="Bottom">
+                    <Button x:Name="btnResetSkinFile" DockPanel.Dock="Right" Click="BtnResetSkinFile_Click">重置皮肤文件</Button>
+                    <Label MinWidth="60">皮肤</Label>
+                </DockPanel>
+                <ListBox x:Name="listVersions" SelectionMode="Single" SelectionChanged="ListVersions_SelectionChanged">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel ToolTip="{Binding Detail}">
+                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                                    <Label FontSize="14" MinWidth="50" Content="{Binding SerialNo}"></Label>
+                                    <Label FontSize="14" Content="{Binding Title}"></Label>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                                    <Label>文件数</Label>
+                                    <Label MinWidth="50" Content="{Binding ChangeCount}"></Label>
+                                    <Label>下载大小</Label>
+                                    <Label MinWidth="50" Content="{Binding DownloadSizeStr}"></Label>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                                    <Label>更新时间</Label>
+                                    <Label MinWidth="50" Content="{Binding UpdateTime}"></Label>
+                                </StackPanel>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+
+            <GridSplitter Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch"></GridSplitter>
+
+            <DockPanel Grid.Row="1" Grid.Column="2">
+                <ListView x:Name="listFiles" FontFamily="Consolas">
+                    <ListView.View>
+                        <GridView AllowsColumnReorder="True">
+                            <GridViewColumn Header="路径" Width="300" DisplayMemberBinding="{Binding LocalPath}" />
+                            <GridViewColumn Header="大小" Width="80" DisplayMemberBinding="{Binding SizeStr}" />
+                            <GridViewColumn Header="更新时间" Width="160" DisplayMemberBinding="{Binding UpdateTime}" />
+                            <GridViewColumn Header="MD5" Width="240" DisplayMemberBinding="{Binding Md5}" />
+                            <GridViewColumn Header="操作" Width="120" DisplayMemberBinding="{Binding OperateStr}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</Window>
